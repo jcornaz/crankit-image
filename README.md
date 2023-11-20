@@ -1,11 +1,10 @@
 # crankit-image
 
-
 [![License](https://img.shields.io/crates/l/crankit-image)](#Unlicense)
 [![Crates.io](https://img.shields.io/crates/v/crankit-image)](https://crates.io/crates/crankit-image)
 [![Docs](https://docs.rs/impacted/badge.svg)](https://docs.rs/crankit-image)
 
-An ergonomic image API for the playdate
+A safe and ergonomic image API for the playdate
 
 ## Maintenance status
 
