@@ -4,9 +4,9 @@ use core::{
 };
 
 use alloc::ffi::CString;
-use playdate_sys_v02::ffi::{playdate_graphics, LCDBitmap};
+use playdate_sys_v02::ffi::{playdate_graphics, LCDBitmap, LCDBitmapFlip};
 
-use crate::{ImageNotFoundError, LoadImage};
+use crate::{DrawImage, Flip, ImageNotFoundError, LoadImage};
 
 pub struct Image<'a> {
     api: &'a playdate_graphics,
@@ -37,6 +37,24 @@ impl<'a> LoadImage for &'a playdate_graphics {
             } else {
                 Ok(Image { api: self, ptr })
             }
+        }
+    }
+}
+
+impl DrawImage<Image<'_>> for playdate_graphics {
+    fn draw_with_flip(&self, image: &Image<'_>, top_left: impl Into<[i32; 2]>, flip: Flip) {
+        let [x, y] = top_left.into();
+        unsafe { self.drawBitmap.unwrap()(image.ptr, x, y, flip.into()) }
+    }
+}
+
+impl From<Flip> for LCDBitmapFlip {
+    fn from(value: Flip) -> Self {
+        match value {
+            Flip::Unflipped => Self::kBitmapUnflipped,
+            Flip::FlippedX => Self::kBitmapFlippedX,
+            Flip::FlippedY => Self::kBitmapFlippedY,
+            Flip::FlippedXY => Self::kBitmapFlippedXY,
         }
     }
 }

@@ -36,6 +36,55 @@ pub trait LoadImage {
     fn load_from_path(&self, path: impl AsRef<str>) -> Result<Self::Image, Self::Error>;
 }
 
+/// Ability to draw an image on screen
+pub trait DrawImage<I> {
+    /// Draw the image on screen with the top-left corner at the given screen coordinates
+    fn draw(&self, image: &I, top_left: impl Into<[i32; 2]>) {
+        self.draw_with_flip(image, top_left, Flip::default());
+    }
+
+    /// Draw the image on screen with the top-left corner at the given screen coordinates
+    fn draw_with_flip(&self, image: &I, top_left: impl Into<[i32; 2]>, flip: Flip);
+}
+
+/// Flag indicating if how the image should be flipped
+#[allow(clippy::exhaustive_enums)]
+#[derive(Debug, Copy, Clone, Default, Eq, PartialEq)]
+pub enum Flip {
+    /// Do not flip the image
+    #[default]
+    Unflipped,
+    /// Flip horizontaly (on the X axis)
+    FlippedX,
+    /// Flip verticaly (on the Y axis)
+    FlippedY,
+    /// Flip both horizontaly and verticaly (on the X and Y axes)
+    FlippedXY,
+}
+
+#[allow(missing_docs)]
+impl Flip {
+    #[must_use]
+    pub fn new(flip_x: bool, flip_y: bool) -> Self {
+        match (flip_x, flip_y) {
+            (false, false) => Self::Unflipped,
+            (true, false) => Self::FlippedX,
+            (false, true) => Self::FlippedY,
+            (true, true) => Self::FlippedXY,
+        }
+    }
+
+    #[must_use]
+    pub fn horizontal(flip: bool) -> Self {
+        Self::new(flip, false)
+    }
+
+    #[must_use]
+    pub fn vertical(flip: bool) -> Self {
+        Self::new(false, flip)
+    }
+}
+
 /// Error returned when attempting to load an image that cannot be found
 #[non_exhaustive]
 #[derive(Debug, Clone)]
