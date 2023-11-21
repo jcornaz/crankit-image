@@ -7,11 +7,31 @@ use core::{
 use alloc::{ffi::CString, string::String};
 use playdate_sys_v02::ffi::{playdate_graphics, LCDBitmap, LCDBitmapFlip};
 
-use crate::{DrawImage, Flip, LoadImage};
+use crate::{DrawImage, Flip, HasSize, LoadImage};
 
 pub struct Image<'a> {
     api: &'a playdate_graphics,
     ptr: *mut LCDBitmap,
+}
+
+impl<'a> HasSize for Image<'a> {
+    fn size(&self) -> [i32; 2] {
+        let mut size = [0; 2];
+        let mut row_bytes = 0;
+        let mut mask: *mut u8 = ptr::null_mut();
+        let mut data: *mut u8 = ptr::null_mut();
+        unsafe {
+            self.api.getBitmapData.unwrap()(
+                self.ptr,
+                ptr::addr_of_mut!(size[0]),
+                ptr::addr_of_mut!(size[1]),
+                ptr::addr_of_mut!(row_bytes),
+                ptr::addr_of_mut!(mask),
+                ptr::addr_of_mut!(data),
+            );
+        }
+        size
+    }
 }
 
 impl<'a> Drop for Image<'a> {

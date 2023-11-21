@@ -43,6 +43,10 @@ pub trait DrawImage<I> {
     fn draw_with_flip(&self, image: &I, top_left: impl Into<[i32; 2]>, flip: Flip);
 }
 
+pub trait HasSize {
+    fn size(&self) -> [i32; 2];
+}
+
 /// Flag indicating if how the image should be flipped
 #[allow(clippy::exhaustive_enums)]
 #[derive(Debug, Copy, Clone, Default, Eq, PartialEq)]
