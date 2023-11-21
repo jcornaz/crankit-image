@@ -62,11 +62,43 @@ pub enum Flip {
     FlippedXY,
 }
 
+impl Flip {
+    /// Returns true if this flips horizontaly
+    #[must_use]
+    pub fn horizontal(self) -> bool {
+        match self {
+            Flip::FlippedX | Flip::FlippedXY => true,
+            Flip::FlippedY | Flip::Unflipped => false,
+        }
+    }
+
+    /// Returns true if this flips verticaly
+    #[must_use]
+    pub fn vertical(self) -> bool {
+        match self {
+            Flip::FlippedY | Flip::FlippedXY => true,
+            Flip::FlippedX | Flip::Unflipped => false,
+        }
+    }
+
+    /// Sets the horizontal flip and conserve the vertical flip
+    #[must_use]
+    pub fn with_horizontal(self, flip: bool) -> Self {
+        Self::new(flip, self.vertical())
+    }
+
+    /// Sets the vertical flip and conserve the horizontal flip
+    #[must_use]
+    pub fn with_vertical(self, flip: bool) -> Self {
+        Self::new(self.horizontal(), flip)
+    }
+}
+
 #[allow(missing_docs)]
 impl Flip {
     #[must_use]
-    pub fn new(flip_x: bool, flip_y: bool) -> Self {
-        match (flip_x, flip_y) {
+    pub fn new(horizontal: bool, vertical: bool) -> Self {
+        match (horizontal, vertical) {
             (false, false) => Self::Unflipped,
             (true, false) => Self::FlippedX,
             (false, true) => Self::FlippedY,
@@ -75,12 +107,12 @@ impl Flip {
     }
 
     #[must_use]
-    pub fn horizontal(flip: bool) -> Self {
+    pub fn from_horizontal(flip: bool) -> Self {
         Self::new(flip, false)
     }
 
     #[must_use]
-    pub fn vertical(flip: bool) -> Self {
+    pub fn from_vertical(flip: bool) -> Self {
         Self::new(false, flip)
     }
 }
