@@ -40,7 +40,7 @@ pub trait DrawImage<I> {
     }
 
     /// Draw the image on screen with the top-left corner at the given screen coordinates
-    fn draw_with_flip(&self, image: &I, top_left: impl Into<[i32; 2]>, flip: Flip);
+    fn draw_with_flip(&self, image: &I, top_left: impl Into<[i32; 2]>, flip: impl Into<Flip>);
 }
 
 pub trait HasSize {
@@ -114,6 +114,12 @@ impl Flip {
     #[must_use]
     pub fn from_vertical(flip: bool) -> Self {
         Self::new(false, flip)
+    }
+}
+
+impl From<[bool; 2]> for Flip {
+    fn from([x, y]: [bool; 2]) -> Self {
+        Self::new(x, y)
     }
 }
 

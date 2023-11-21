@@ -74,9 +74,14 @@ impl<'a> LoadImage for &'a playdate_graphics {
 }
 
 impl DrawImage<Image<'_>> for playdate_graphics {
-    fn draw_with_flip(&self, image: &Image<'_>, top_left: impl Into<[i32; 2]>, flip: Flip) {
+    fn draw_with_flip(
+        &self,
+        image: &Image<'_>,
+        top_left: impl Into<[i32; 2]>,
+        flip: impl Into<Flip>,
+    ) {
         let [x, y] = top_left.into();
-        unsafe { self.drawBitmap.unwrap()(image.ptr, x, y, flip.into()) }
+        unsafe { self.drawBitmap.unwrap()(image.ptr, x, y, flip.into().into()) }
     }
 }
 
