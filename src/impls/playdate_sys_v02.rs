@@ -5,9 +5,9 @@ use core::{
 };
 
 use alloc::{ffi::CString, string::String};
-use playdate_sys_v02::ffi::{playdate_graphics, LCDBitmap, LCDBitmapFlip};
+use playdate_sys_v02::ffi::{playdate_graphics, LCDBitmap, LCDBitmapDrawMode, LCDBitmapFlip};
 
-use crate::{DrawImage, Flip, HasSize, LoadImage};
+use crate::{DrawImage, DrawMode, Flip, HasSize, LoadImage};
 
 pub struct Image<'a> {
     api: &'a playdate_graphics,
@@ -87,6 +87,21 @@ impl From<Flip> for LCDBitmapFlip {
             Flip::FlippedX => Self::kBitmapFlippedX,
             Flip::FlippedY => Self::kBitmapFlippedY,
             Flip::FlippedXY => Self::kBitmapFlippedXY,
+        }
+    }
+}
+
+impl From<DrawMode> for LCDBitmapDrawMode {
+    fn from(value: DrawMode) -> Self {
+        match value {
+            DrawMode::Copy => LCDBitmapDrawMode::kDrawModeCopy,
+            DrawMode::WhiteTransparent => LCDBitmapDrawMode::kDrawModeWhiteTransparent,
+            DrawMode::BlackTransparent => LCDBitmapDrawMode::kDrawModeBlackTransparent,
+            DrawMode::FillWhite => LCDBitmapDrawMode::kDrawModeFillWhite,
+            DrawMode::FillBlack => LCDBitmapDrawMode::kDrawModeFillBlack,
+            DrawMode::XOR => LCDBitmapDrawMode::kDrawModeXOR,
+            DrawMode::NXOR => LCDBitmapDrawMode::kDrawModeNXOR,
+            DrawMode::Inverted => LCDBitmapDrawMode::kDrawModeInverted,
         }
     }
 }

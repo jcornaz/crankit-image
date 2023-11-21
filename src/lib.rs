@@ -84,3 +84,27 @@ impl Flip {
         Self::new(false, flip)
     }
 }
+
+#[non_exhaustive]
+#[derive(Debug, Copy, Clone, Default, Eq, PartialEq)]
+pub enum DrawMode {
+    /// Images are drawn exactly as they are (black pixels are drawn black and white pixels are drawn white)
+    #[default]
+    Copy,
+    /// Any white portions of an image are drawn transparent (black pixels are drawn black and white pixels are drawn transparent)
+    WhiteTransparent,
+    /// Any black portions of an image are drawn transparent (black pixels are drawn transparent and white pixels are drawn white)
+    BlackTransparent,
+    /// All non-transparent pixels are drawn white (black pixels are drawn white and white pixels are drawn white)
+    FillWhite,
+    /// All non-transparent pixels are drawn black (black pixels are drawn black and white pixels are drawn black)
+    FillBlack,
+    /// Pixels are drawn inverted on white backgrounds, creating an effect where any white pixels in the original image will always be visible,
+    /// regardless of the background color, and any black pixels will appear transparent (on a white background, black pixels are drawn white and white pixels are drawn black)
+    XOR,
+    /// Pixels are drawn inverted on black backgrounds, creating an effect where any black pixels in the original image will always be visible,
+    /// regardless of the background color, and any white pixels will appear transparent (on a black background, black pixels are drawn white and white pixels are drawn black)
+    NXOR,
+    /// Pixels are drawn inverted (black pixels are drawn white and white pixels are drawn black)
+    Inverted,
+}
