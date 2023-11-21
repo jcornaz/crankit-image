@@ -8,10 +8,6 @@
 
 extern crate alloc;
 
-use core::fmt::Display;
-
-use alloc::string::String;
-
 /// Implementations of the the API traits
 #[allow(missing_docs)]
 pub mod impls {
@@ -82,30 +78,5 @@ impl Flip {
     #[must_use]
     pub fn vertical(flip: bool) -> Self {
         Self::new(false, flip)
-    }
-}
-
-/// Error returned when attempting to load an image that cannot be found
-#[non_exhaustive]
-#[derive(Debug, Clone)]
-pub struct ImageNotFoundError {
-    path: String,
-}
-
-impl From<String> for ImageNotFoundError {
-    fn from(path: String) -> Self {
-        Self { path }
-    }
-}
-
-impl From<&str> for ImageNotFoundError {
-    fn from(path: &str) -> Self {
-        Self { path: path.into() }
-    }
-}
-
-impl Display for ImageNotFoundError {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(f, "Image not found: {}", self.path)
     }
 }
