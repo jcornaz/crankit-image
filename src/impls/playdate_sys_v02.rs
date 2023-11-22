@@ -7,7 +7,7 @@ use core::{
 use alloc::{ffi::CString, string::String};
 use playdate_sys_v02::ffi::{playdate_graphics, LCDBitmap, LCDBitmapDrawMode, LCDBitmapFlip};
 
-use crate::{DrawImage, DrawMode, Flip, HasSize, LoadImage};
+use crate::{DrawImage, DrawMode, HasSize, LoadImage};
 
 pub struct Image<'a> {
     api: &'a playdate_graphics,
@@ -78,21 +78,20 @@ impl DrawImage<Image<'_>> for playdate_graphics {
         &self,
         image: &Image<'_>,
         top_left: impl Into<[i32; 2]>,
-        flip: impl Into<Flip>,
+        flip: impl Into<[bool; 2]>,
     ) {
         let [x, y] = top_left.into();
-        unsafe { self.drawBitmap.unwrap()(image.ptr, x, y, flip.into().into()) }
+        let flip = lcd_bitmap_flip(flip);
+        unsafe { self.drawBitmap.unwrap()(image.ptr, x, y, flip) }
     }
 }
 
-impl From<Flip> for LCDBitmapFlip {
-    fn from(value: Flip) -> Self {
-        match value {
-            Flip::Unflipped => Self::kBitmapUnflipped,
-            Flip::FlippedX => Self::kBitmapFlippedX,
-            Flip::FlippedY => Self::kBitmapFlippedY,
-            Flip::FlippedXY => Self::kBitmapFlippedXY,
-        }
+fn lcd_bitmap_flip(flip: impl Into<[bool; 2]>) -> LCDBitmapFlip {
+    match flip.into() {
+        [false, false] => LCDBitmapFlip::kBitmapUnflipped,
+        [true, false] => LCDBitmapFlip::kBitmapFlippedX,
+        [false, true] => LCDBitmapFlip::kBitmapFlippedY,
+        [true, true] => LCDBitmapFlip::kBitmapFlippedXY,
     }
 }
 

@@ -36,91 +36,15 @@ pub trait LoadImage {
 pub trait DrawImage<I> {
     /// Draw the image on screen with the top-left corner at the given screen coordinates
     fn draw(&self, image: &I, top_left: impl Into<[i32; 2]>) {
-        self.draw_with_flip(image, top_left, Flip::default());
+        self.draw_with_flip(image, top_left, [false, false]);
     }
 
     /// Draw the image on screen with the top-left corner at the given screen coordinates
-    fn draw_with_flip(&self, image: &I, top_left: impl Into<[i32; 2]>, flip: impl Into<Flip>);
+    fn draw_with_flip(&self, image: &I, top_left: impl Into<[i32; 2]>, flip: impl Into<[bool; 2]>);
 }
 
 pub trait HasSize {
     fn size(&self) -> [i32; 2];
-}
-
-/// Flag indicating if how the image should be flipped
-#[allow(clippy::exhaustive_enums)]
-#[derive(Debug, Copy, Clone, Default, Eq, PartialEq)]
-pub enum Flip {
-    /// Do not flip the image
-    #[default]
-    Unflipped,
-    /// Flip horizontaly (on the X axis)
-    FlippedX,
-    /// Flip verticaly (on the Y axis)
-    FlippedY,
-    /// Flip both horizontaly and verticaly (on the X and Y axes)
-    FlippedXY,
-}
-
-impl Flip {
-    /// Returns true if this flips horizontaly
-    #[must_use]
-    pub fn horizontal(self) -> bool {
-        match self {
-            Flip::FlippedX | Flip::FlippedXY => true,
-            Flip::FlippedY | Flip::Unflipped => false,
-        }
-    }
-
-    /// Returns true if this flips verticaly
-    #[must_use]
-    pub fn vertical(self) -> bool {
-        match self {
-            Flip::FlippedY | Flip::FlippedXY => true,
-            Flip::FlippedX | Flip::Unflipped => false,
-        }
-    }
-
-    /// Sets the horizontal flip and conserve the vertical flip
-    #[must_use]
-    pub fn with_horizontal(self, flip: bool) -> Self {
-        Self::new(flip, self.vertical())
-    }
-
-    /// Sets the vertical flip and conserve the horizontal flip
-    #[must_use]
-    pub fn with_vertical(self, flip: bool) -> Self {
-        Self::new(self.horizontal(), flip)
-    }
-}
-
-#[allow(missing_docs)]
-impl Flip {
-    #[must_use]
-    pub fn new(horizontal: bool, vertical: bool) -> Self {
-        match (horizontal, vertical) {
-            (false, false) => Self::Unflipped,
-            (true, false) => Self::FlippedX,
-            (false, true) => Self::FlippedY,
-            (true, true) => Self::FlippedXY,
-        }
-    }
-
-    #[must_use]
-    pub fn from_horizontal(flip: bool) -> Self {
-        Self::new(flip, false)
-    }
-
-    #[must_use]
-    pub fn from_vertical(flip: bool) -> Self {
-        Self::new(false, flip)
-    }
-}
-
-impl From<[bool; 2]> for Flip {
-    fn from([x, y]: [bool; 2]) -> Self {
-        Self::new(x, y)
-    }
 }
 
 #[non_exhaustive]
