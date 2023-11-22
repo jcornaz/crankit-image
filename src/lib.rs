@@ -43,6 +43,74 @@ pub trait DrawImage<I> {
     fn draw_with_flip(&self, image: &I, top_left: impl Into<[i32; 2]>, flip: impl Into<[bool; 2]>);
 }
 
+/// Ability to draw an image from its origin point (instead of from the top-left)
+///
+/// This trait is automatically implemented for implementations of `DrawImage<I>` where `I: HasSize`
+pub trait DrawFromOrigin<I> {
+    /// Draw the image so that the `origin` is at `position`
+    ///
+    /// The origin is expressed in ratio of the size. So `[0., 0.]` is the top-left and `[1.,1.]` is the bottom right.
+    fn draw_from_origin(
+        &self,
+        image: &I,
+        position: impl Into<[i32; 2]>,
+        origin: impl Into<[f32; 2]>,
+    ) {
+        self.draw_from_origin_with_flip(image, position, origin, [false, false]);
+    }
+
+    /// Draw the image so that the `origin` is at `position` with given `flip` argument.
+    ///
+    /// The origin is expressed in ratio of the size. So `[0., 0.]` is the top-left and `[1.,1.]` is the bottom right.
+    ///
+    /// If flipped, the image is fliped around its origin.
+    fn draw_from_origin_with_flip(
+        &self,
+        image: &I,
+        position: impl Into<[i32; 2]>,
+        origin: impl Into<[f32; 2]>,
+        flip: impl Into<[bool; 2]>,
+    );
+}
+
+impl<T, I> DrawFromOrigin<I> for T
+where
+    T: DrawImage<I>,
+    I: HasSize,
+{
+    fn draw_from_origin_with_flip(
+        &self,
+        image: &I,
+        position: impl Into<[i32; 2]>,
+        origin: impl Into<[f32; 2]>,
+        flip: impl Into<[bool; 2]>,
+    ) {
+        let flip = flip.into();
+        let position = position_from_origin(position.into(), origin.into(), image.size(), flip);
+        self.draw_with_flip(image, position, flip);
+    }
+}
+
+#[allow(clippy::cast_precision_loss, clippy::cast_possible_truncation)]
+fn position_from_origin(
+    [x, y]: [i32; 2],
+    [origin_x, origin_y]: [f32; 2],
+    [w, h]: [i32; 2],
+    [flip_x, flip_y]: [bool; 2],
+) -> [i32; 2] {
+    let x = if flip_x {
+        x - (w as f32 * (1.0 - origin_x)) as i32
+    } else {
+        x - (w as f32 * origin_x) as i32
+    };
+    let y = if flip_y {
+        y - (h as f32 * (1.0 - origin_y)) as i32
+    } else {
+        y - (h as f32 * origin_y) as i32
+    };
+    [x, y]
+}
+
 pub trait HasSize {
     fn size(&self) -> [i32; 2];
 }
@@ -69,4 +137,33 @@ pub enum DrawMode {
     NXOR,
     /// Pixels are drawn inverted (black pixels are drawn white and white pixels are drawn black)
     Inverted,
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use rstest::rstest;
+
+    #[rstest]
+    #[case([0, 0], [0., 0.], [2, 3], [false, false], [0, 0])]
+    #[case([0, 0], [1., 0.], [2, 3], [false, false], [-2, 0])]
+    #[case([0, 0], [0., 1.], [2, 3], [false, false], [0, -3])]
+    #[case([0, 0], [1., 1.], [2, 3], [false, false], [-2, -3])]
+    #[case([0, 0], [2., 2.], [2, 3], [false, false], [-4, -6])]
+    #[case([0, 0], [0., 0.], [2, 3], [true, false], [-2, 0])]
+    #[case([0, 0], [1., 0.], [2, 3], [true, false], [0, 0])]
+    #[case([0, 0], [0., 1.], [2, 3], [false, true], [0, 0])]
+    #[case([0, 0], [1., 1.], [2, 3], [true, true], [0, 0])]
+    #[case([0, 0], [2., 0.], [2, 3], [true, false], [2, 0])]
+    #[case([0, 0], [0., 2.], [2, 3], [false, true], [0, 3])]
+    fn test_position_from_origin(
+        #[case] position: [i32; 2],
+        #[case] origin: [f32; 2],
+        #[case] size: [i32; 2],
+        #[case] flip: [bool; 2],
+        #[case] expected: [i32; 2],
+    ) {
+        let actual = position_from_origin(position, origin, size, flip);
+        assert_eq!(actual, expected);
+    }
 }
