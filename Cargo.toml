@@ -10,7 +10,7 @@ categories = ["api-bindings", "game-development", "no-std"]
 keywords = ["playdate", "gamedev", "no_std"]
 
 [features]
-default = ["playdate-sys-v02"]
+default = []
 playdate-sys-v02 = ["dep:playdate-sys-v02"]
 
 [dependencies]
