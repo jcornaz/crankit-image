@@ -4,7 +4,7 @@
 //!
 //! ## Feature flags
 //!
-//! * `playdate-sys-v02` (default): provides implementations of the input source traits for the types `ffi::playdate_sys` and `ffi::PlaydateAPI` of the crate [`playdate-sys`](https://docs.rs/playdate-sys/0.2) (version `0.2`)
+//! * `playdate-sys-v02`: provides implementations of the input source traits for the types `&ffi::playdate_graphics` of the crate [`playdate-sys`](https://docs.rs/playdate-sys/0.2) (version `0.2`)
 
 extern crate alloc;
 
