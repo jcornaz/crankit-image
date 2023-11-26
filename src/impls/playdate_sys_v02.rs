@@ -51,6 +51,13 @@ impl Display for ImageNotFoundError {
     }
 }
 
+#[cfg(feature = "anyhow")]
+impl From<ImageNotFoundError> for anyhow::Error {
+    fn from(value: ImageNotFoundError) -> Self {
+        Self::msg(value.0)
+    }
+}
+
 impl<'a> LoadImage for &'a playdate_graphics {
     type Image = Image<'a>;
     type Error = ImageNotFoundError;

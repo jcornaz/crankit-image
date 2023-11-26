@@ -4,7 +4,8 @@
 //!
 //! ## Feature flags
 //!
-//! * `playdate-sys-v02`: provides implementations of the input source traits for the types `&ffi::playdate_graphics` of the crate [`playdate-sys`](https://docs.rs/playdate-sys/0.2) (version `0.2`)
+//! * `playdate-sys-v02`: implementations of the input source traits for the types `&ffi::playdate_graphics` of the crate [`playdate-sys`](https://docs.rs/playdate-sys/0.2) (version `0.2`)
+//! * `anyhow`: implementations of `From` error type for `anyhow::Error`
 
 extern crate alloc;
 
