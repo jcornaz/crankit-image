@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/crates/l/crankit-image)](#Unlicense)
 [![Crates.io](https://img.shields.io/crates/v/crankit-image)](https://crates.io/crates/crankit-image)
-[![Docs](https://docs.rs/impacted/badge.svg)](https://docs.rs/crankit-image)
+[![Docs](https://docs.rs/crankit-image/badge.svg)](https://docs.rs/crankit-image)
 
 A safe and ergonomic image API for the playdate.
 
