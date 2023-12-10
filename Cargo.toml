@@ -12,6 +12,9 @@ description = "An ergonomic image API for the playdate"
 categories = ["api-bindings", "game-development", "no-std"]
 keywords = ["playdate", "gamedev", "no_std"]
 
+[badges.maintenance]
+status = "actively-developed"
+
 [features]
 default = []
 playdate-sys-v02 = ["dep:playdate-sys-v02"]
