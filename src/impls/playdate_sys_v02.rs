@@ -7,7 +7,7 @@ use core::{
 use alloc::{ffi::CString, string::String};
 use playdate_sys_v02::ffi::{playdate_graphics, LCDBitmap, LCDBitmapDrawMode, LCDBitmapFlip};
 
-use crate::{DrawImage, DrawMode, HasSize, LoadImage};
+use crate::{DrawImage, DrawMode, HasSize, LoadImage, ToColumns, ToRows};
 
 pub struct Image<'a> {
     api: &'a playdate_graphics,
@@ -31,6 +31,42 @@ impl<'a> HasSize for Image<'a> {
             );
         }
         size
+    }
+}
+
+impl<'a> ToColumns for Image<'a> {
+    fn to_columns(&self, n: usize) -> impl Iterator<Item = Self> {
+        let n: i32 = n.try_into().unwrap();
+        let [mut w, h] = self.size();
+        w /= n;
+        (0..n).map(move |i| unsafe {
+            let image = Self {
+                api: self.api,
+                ptr: self.api.newBitmap.unwrap()(w, h, 0),
+            };
+            self.api.pushContext.unwrap()(self.ptr);
+            self.api.drawBitmap.unwrap()(self.ptr, -i * w, 0, LCDBitmapFlip::kBitmapUnflipped);
+            self.api.popContext.unwrap()();
+            image
+        })
+    }
+}
+
+impl<'a> ToRows for Image<'a> {
+    fn to_rows(&self, n: usize) -> impl Iterator<Item = Self> {
+        let n: i32 = n.try_into().unwrap();
+        let [w, mut h] = self.size();
+        h /= n;
+        (0..n).map(move |i| unsafe {
+            let image = Self {
+                api: self.api,
+                ptr: self.api.newBitmap.unwrap()(w, h, 0),
+            };
+            self.api.pushContext.unwrap()(self.ptr);
+            self.api.drawBitmap.unwrap()(self.ptr, 0, -i * h, LCDBitmapFlip::kBitmapUnflipped);
+            self.api.popContext.unwrap()();
+            image
+        })
     }
 }
 

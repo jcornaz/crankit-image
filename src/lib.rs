@@ -34,6 +34,16 @@ pub trait LoadImage {
     fn load_from_path(&self, path: impl AsRef<str>) -> Result<Self::Image, Self::Error>;
 }
 
+/// Split the images into `n` columns of the same size
+pub trait ToColumns: Sized {
+    fn to_columns(&self, n: usize) -> impl Iterator<Item = Self>;
+}
+
+/// Split the images into `n` rows of the same size
+pub trait ToRows: Sized {
+    fn to_rows(&self, n: usize) -> impl Iterator<Item = Self>;
+}
+
 /// Ability to draw an image on screen
 pub trait DrawImage<I> {
     /// Draw the image on screen with the top-left corner at the given screen coordinates
