@@ -9,7 +9,8 @@ watch:
 
 # Run the tests
 test:
-	cargo hack test --tests --feature-powerset 
+	cargo hack check --workspace
+	cargo hack test --tests --feature-powerset
 	cargo test --examples --all-features
 	cargo test --doc --all-features
 
@@ -17,6 +18,10 @@ test:
 lint:
 	cargo fmt -- --check
 	cargo hack clippy --each-feature --all-targets
+
+
+run-example:
+	cd example && cargo playdate run
 
 # Build the documentation
 doc *args:

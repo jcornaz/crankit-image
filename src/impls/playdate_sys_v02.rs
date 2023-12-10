@@ -5,7 +5,9 @@ use core::{
 };
 
 use alloc::{ffi::CString, string::String};
-use playdate_sys_v02::ffi::{playdate_graphics, LCDBitmap, LCDBitmapDrawMode, LCDBitmapFlip};
+use playdate_sys_v02::ffi::{
+    playdate_graphics, LCDBitmap, LCDBitmapDrawMode, LCDBitmapFlip, LCDColor, LCDSolidColor,
+};
 
 use crate::{DrawImage, DrawMode, HasSize, LoadImage, ToColumns, ToRows};
 
@@ -42,9 +44,9 @@ impl<'a> ToColumns for Image<'a> {
         (0..n).map(move |i| unsafe {
             let image = Self {
                 api: self.api,
-                ptr: self.api.newBitmap.unwrap()(w, h, 0),
+                ptr: self.api.newBitmap.unwrap()(w, h, LCDSolidColor::kColorClear as LCDColor),
             };
-            self.api.pushContext.unwrap()(self.ptr);
+            self.api.pushContext.unwrap()(image.ptr);
             self.api.drawBitmap.unwrap()(self.ptr, -i * w, 0, LCDBitmapFlip::kBitmapUnflipped);
             self.api.popContext.unwrap()();
             image
@@ -60,9 +62,9 @@ impl<'a> ToRows for Image<'a> {
         (0..n).map(move |i| unsafe {
             let image = Self {
                 api: self.api,
-                ptr: self.api.newBitmap.unwrap()(w, h, 0),
+                ptr: self.api.newBitmap.unwrap()(w, h, LCDSolidColor::kColorClear as LCDColor),
             };
-            self.api.pushContext.unwrap()(self.ptr);
+            self.api.pushContext.unwrap()(image.ptr);
             self.api.drawBitmap.unwrap()(self.ptr, 0, -i * h, LCDBitmapFlip::kBitmapUnflipped);
             self.api.popContext.unwrap()();
             image
