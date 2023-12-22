@@ -21,7 +21,7 @@ playdate-sys-v02 = ["dep:playdate-sys-v02"]
 anyhow = ["dep:anyhow"]
 
 [dependencies]
-anyhow = { version = "1.0.75", default-features = false, optional = true }
+anyhow = { version = "1.0", default-features = false, optional = true }
 playdate-sys-v02 = { package = "playdate-sys", version = "0.2.11", default-features = false, optional = true }
 
 [dev-dependencies]
